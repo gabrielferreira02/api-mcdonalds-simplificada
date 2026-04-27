@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 import uuid
 
 class User(Base):
-    __tablename__ = "users-db"
+    __tablename__ = "users_db"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     first_name = Column("first_name", String, nullable=False)
     last_name = Column("last_name", String, nullable=False)
