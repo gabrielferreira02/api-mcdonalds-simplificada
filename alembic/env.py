@@ -30,7 +30,8 @@ from app.models.category import Category
 from app.models.order import Order
 from app.models.product import Product
 from app.models.user import User
-target_metadata = Base
+from app.models.order_item import OrderItem
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
