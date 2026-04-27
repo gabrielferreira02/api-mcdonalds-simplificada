@@ -1,6 +1,5 @@
 from app.core.database import Base
 from sqlalchemy import Column, UUID, Integer, ForeignKey
-from sqlalchemy.orm import relationship
 import uuid
 
 class OrderItem(Base):
