@@ -7,4 +7,5 @@ class Category(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column("name", String, nullable=False)
     slug = Column("slug", String, nullable=False, unique=True)
-    imageUrl = Column("imageUrl", String)
+    image_url = Column("image_url", String, nullable=True)
+    image_path = Column("image_path", String, nullable=True)
