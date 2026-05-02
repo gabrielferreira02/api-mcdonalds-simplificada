@@ -27,10 +27,9 @@ class CategoryService:
         if not category:
             raise HTTPException(status_code=404, detail="Category not found")
 
-        if category.imageUrl:
+        if category.image_path:
             try:
-                path = category.imageUrl.split("/object/public/")[1].split("/", 1)[1]
-                supabase_client.storage.from_(SUPABASE_BUCKET).remove([path])
+                supabase_client.storage.from_(SUPABASE_BUCKET).remove([category.image_path])
             except Exception:
                 raise HTTPException(status_code=500, detail="Internal error deleting category")
         session.delete(category)
@@ -65,7 +64,8 @@ class CategoryService:
         if hasattr(response, "error"):
             raise HTTPException(status_code=500, detail="Error uploading image")
 
-        category.imageUrl = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{filename}"
+        category.image_url = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{filename}"
+        category.image_path = filename
         session.commit()
         return category
 
@@ -113,12 +113,12 @@ class CategoryService:
         if hasattr(response, "error"):
             raise HTTPException(status_code=500, detail="Error uploading image")
         
-        if category.imageUrl:
+        if category.image_path:
             try:
-                path = category.imageUrl.split("/object/public/")[1].split("/", 1)[1]
-                supabase_client.storage.from_(SUPABASE_BUCKET).remove([path])
+                supabase_client.storage.from_(SUPABASE_BUCKET).remove([category.image_path])
             except Exception:
                 raise HTTPException(status_code=500, detail="Internal error deleting category")
-        category.imageUrl = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{filename}"
+        category.image_url = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{filename}"
+        category.image_path = filename
         session.commit()
         return category

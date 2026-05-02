@@ -3,7 +3,7 @@ from pydantic import BaseModel
 class CategoryResponseSchema(BaseModel):
     name: str
     slug: str
-    imageUrl: str | None
+    image_url: str | None
     class Config:
         from_attributes = True
 
