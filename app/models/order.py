@@ -21,7 +21,7 @@ class Order(Base):
     status = Column("status", SqlEnum(OrderStatus), default=OrderStatus.pending)
     address = Column("address", String, nullable=False)
     complement = Column("complement", String, nullable=False)
-    payment_link = Column("payment_link", String, nullable=False)
+    payment_link = Column("payment_link", String, nullable=False, default="")
     created_at = Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column("updated_at", DateTime(timezone=True), server_default=func.now(), nullable=False)
     items = relationship("OrderItem", cascade="all, delete")
