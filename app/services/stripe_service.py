@@ -4,6 +4,7 @@ from app.core.vars import STRIPE_ENDPOINT_SECRET
 import stripe
 from uuid import UUID
 from app.models.order import Order, OrderStatus
+from datetime import datetime
 
 class StripeService:
     async def payment_webhook(request: Request, session: Session):
@@ -26,4 +27,5 @@ class StripeService:
                 raise HTTPException(status_code=404, detail="Order not found")
             
             order.status = OrderStatus.preparing
+            order.updated_at = datetime.now()
             session.commit()
