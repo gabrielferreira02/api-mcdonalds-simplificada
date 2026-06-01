@@ -23,3 +23,11 @@ class RegisterResponseSchema(BaseModel):
     is_admin: bool
     created_at: datetime
     updated_at: datetime
+
+class LoginRequestSchema(BaseModel):
+    email: str
+    password: str
+
+class LoginResponseSchema(BaseModel):
+    access_token: str
+    refresh_token: str

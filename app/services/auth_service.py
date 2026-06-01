@@ -1,5 +1,9 @@
+from datetime import timedelta, datetime, timezone
+from fastapi.security import OAuth2PasswordRequestForm
+import jwt
+from app.core.vars import SECRET_KEY, ALGORITHM, JWT_EXPIRATION_TIME
 from sqlalchemy.orm import Session
-from app.schemas.auth_schemas import RegisterRequestSchema
+from app.schemas.auth_schemas import LoginRequestSchema, LoginResponseSchema, RegisterRequestSchema
 from fastapi import HTTPException
 from app.helpers.validate_cep import is_valid_cep
 from app.helpers.validate_cpf import is_valid_cpf
@@ -49,4 +53,49 @@ class AuthService:
         session.add(user)
         session.commit()
         return user
+
+    @staticmethod
+    def generate_token(user_id, duration=timedelta(minutes=int(JWT_EXPIRATION_TIME))):
+        expiration_date = datetime.now(timezone.utc) + duration
+        dic_info = {"sub": str(user_id), "exp": expiration_date}
+        token = jwt.encode(dic_info, SECRET_KEY, ALGORITHM)
+        return token
+    
+    def login(body: LoginRequestSchema, session: Session):
+        if not body.email:
+            raise HTTPException(status_code=400, detail="Invalid email")
+        if not body.password:
+            raise HTTPException(status_code=400, detail="Invalid password")
+        
+        user = session.query(User).filter(User.email == body.email).first()
+        if not user:
+            raise HTTPException(status_code=400, detail="Invalid email or password")
+        
+        if not pwd_context.verify(body.password, user.password):
+            raise HTTPException(status_code=400, detail="Invalid email or password")
+        
+        token = AuthService.generate_token(user.id)
+        refresh_token = AuthService.generate_token(user.id, duration=timedelta(days=7))
+        
+        return LoginResponseSchema(access_token=token, refresh_token=refresh_token)
+    
+    def refresh_token(user: User):
+        token = AuthService.generate_token(user.id)
+        refresh_token = AuthService.generate_token(user.id, duration=timedelta(days=7))
+        return LoginResponseSchema(access_token=token, refresh_token=refresh_token)
+
+    def login_docs(body: OAuth2PasswordRequestForm, session: Session):
+        user = session.query(User).filter(User.email == body.username).first()
+
+        if not user:
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        
+        if not pwd_context.verify(body.password, user.password):
+            raise HTTPException(status_code=400, detail="Email ou senha incorretos")
+    
+        token = AuthService.generate_token(user.id)
+        refresh_token = AuthService.generate_token(user.id, timedelta(days=7))
+
+        return LoginResponseSchema(access_token=token, refresh_token=refresh_token)
+
         
