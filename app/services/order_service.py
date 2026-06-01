@@ -11,7 +11,9 @@ from uuid import UUID
 from datetime import datetime
 
 class OrderService:
-    def create_order(body: CreateOrderSchema, session: Session):
+    def create_order(body: CreateOrderSchema, session: Session, user: User):
+        if user.id != body.user:
+            raise HTTPException(status_code=403, detail="You are not authorized to create order for this user")
         if len(body.items) == 0:
             raise HTTPException(status_code=400, detail="There are no items in cart")
 
@@ -65,7 +67,7 @@ class OrderService:
             
             session_checkout = client.v1.checkout.sessions.create(
                 params={
-                    'success_url': 'http://localhost:8000/orders/success',
+                    'success_url': 'http://localhost:4200/pagamentos/sucesso',
                     'cancel_url': 'http://localhost:8000/cancel',
                     'mode': 'payment',
                     'line_items': [
@@ -95,7 +97,10 @@ class OrderService:
             print(str(e))
             raise HTTPException(status_code=500, detail="Error processing payment")
 
-    def get_user_orders(id: UUID, page: int, session: Session):
+    def get_user_orders(id: UUID, page: int, session: Session, user: User):
+        print(user)
+        if user.id != id:
+            raise HTTPException(status_code=403, detail="You are not authorized to view orders for this user")
         if page <= 0:
             raise HTTPException(status_code=400, detail="Invalid page")
         limit = 10
@@ -116,10 +121,12 @@ class OrderService:
             total_pages = ceil(total / limit)
         )
     
-    def get_order_by_id(id: UUID, session: Session):
+    def get_order_by_id(id: UUID, session: Session, user: User):
         order = session.query(Order).filter(Order.id == id).first()
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
+        if user.id != order.user_id and not user.is_admin:
+            raise HTTPException(status_code=403, detail="You are not authorized to view this order")
         items = (
             session.query(OrderItem, Product)
             .join(Product, Product.id == OrderItem.product_id)
@@ -140,11 +147,13 @@ class OrderService:
             items = items_schema
         )
 
-    def cancel_order(id: UUID, session: Session):
+    def cancel_order(id: UUID, session: Session, user: User):
         order = session.query(Order).filter(Order.id == id).first()
 
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")
+        if user.id != order.user_id and not user.is_admin:
+            raise HTTPException(status_code=403, detail="You are not authorized to cancel this order")
         
         if order.status == OrderStatus.pending or order.status == OrderStatus.preparing:
             order.status = OrderStatus.canceled

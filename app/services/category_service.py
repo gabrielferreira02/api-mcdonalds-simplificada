@@ -5,6 +5,7 @@ from app.schemas.category_schemas import CategoryRequestSchema
 from supabase import create_client
 from app.core.vars import SUPABASE_BUCKET, SUPABASE_KEY, SUPABASE_URL, ALLOWED_TYPES
 from app.helpers.generate_slug import generate_slug
+from app.models.user import User
 import uuid
 
 supabase_client = create_client(supabase_key=SUPABASE_KEY, supabase_url=SUPABASE_URL)
@@ -22,7 +23,10 @@ class CategoryService:
         return category
     
     @staticmethod
-    def delete_category(slug: str, session: Session):
+    def delete_category(slug: str, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="You don't have permission to perform this action")
+        
         category = session.query(Category).filter(Category.slug == slug).first()
         if not category:
             raise HTTPException(status_code=404, detail="Category not found")
@@ -35,7 +39,9 @@ class CategoryService:
         session.delete(category)
         session.commit()
 
-    def create_category(name: str, image: UploadFile, session: Session):
+    def create_category(name: str, image: UploadFile, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="You don't have permission to perform this action")
         if not name:
             raise HTTPException(status_code=400, detail="Invalid name")
         
@@ -69,7 +75,9 @@ class CategoryService:
         session.commit()
         return category
 
-    def update_category_name(body: CategoryRequestSchema, slug: str, session: Session):
+    def update_category_name(body: CategoryRequestSchema, slug: str, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="You don't have permission to perform this action")
         if not body.name:
             raise HTTPException(status_code=400, detail="Invalid name")
         
@@ -90,7 +98,9 @@ class CategoryService:
         
         return category
 
-    def update_category_image(slug: str, image: UploadFile, session: Session):
+    def update_category_image(slug: str, image: UploadFile, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="You don't have permission to perform this action")
         if not image:
             raise HTTPException(status_code=400, detail="Invalid image. Field cannot be empty")
         

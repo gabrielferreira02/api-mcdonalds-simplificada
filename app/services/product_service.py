@@ -7,6 +7,7 @@ from app.models.product import Product
 from app.models.category import Category
 from app.schemas.product_schemas import UpdateProductDataSchema, CartRequestSchema, CartItemResponse, CartResponseSchema
 import uuid
+from app.models.user import User
 
 supabase_client = create_client(supabase_key=SUPABASE_KEY, supabase_url=SUPABASE_URL)
 
@@ -16,7 +17,10 @@ class ProductService:
                         description: str,
                         category_slug: str,
                         image: UploadFile,
-                        session: Session):
+                        session: Session,
+                        user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="Unauthorized")
         if not name:
             raise HTTPException(status_code=400, detail="Invalid product name")
         if price <= 0:
@@ -75,7 +79,9 @@ class ProductService:
         products = session.query(Product).filter(Product.is_active == True).all()
         return products
     
-    def deactivate_product(slug: str, session: Session):
+    def deactivate_product(slug: str, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="Unauthorized")
         product = session.query(Product).filter(Product.slug == slug).first()
 
         if not product:
@@ -84,7 +90,9 @@ class ProductService:
         product.is_active = False
         session.commit()
     
-    def activate_product(slug: str, session: Session):
+    def activate_product(slug: str, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="Unauthorized")
         product = session.query(Product).filter(Product.slug == slug).first()
 
         if not product:
@@ -93,7 +101,9 @@ class ProductService:
         product.is_active = True
         session.commit()
 
-    def update_product_data(body: UpdateProductDataSchema, slug: str, session: Session):
+    def update_product_data(body: UpdateProductDataSchema, slug: str, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="Unauthorized")
         if not body.description:
             raise HTTPException(status_code=400, detail="Invalid description")
         if not body.name:
@@ -126,7 +136,9 @@ class ProductService:
         session.commit()
         return product
 
-    def update_product_image(slug: str, image: UploadFile, session: Session):
+    def update_product_image(slug: str, image: UploadFile, session: Session, user: User):
+        if not user.is_admin:
+            raise HTTPException(status_code=403, detail="Unauthorized")
         if not image:
             raise HTTPException(status_code=400, detail="Image required")
         
@@ -167,7 +179,7 @@ class ProductService:
             .all())
         return products
 
-    def get_cart_products(data: CartRequestSchema, session: Session):
+    def get_cart_products(data: CartRequestSchema, session: Session, user: User):
         slugs = [p.slug for p in data.items]
 
         products = (session.query(Product)

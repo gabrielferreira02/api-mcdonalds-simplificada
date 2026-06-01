@@ -25,7 +25,17 @@ class StripeService:
 
             if not order:
                 raise HTTPException(status_code=404, detail="Order not found")
-            
             order.status = OrderStatus.preparing
-            order.updated_at = datetime.now()
-            session.commit()
+
+        if event["type"] == "checkout.session.expired":
+            order_id = str(event['data']['object']['metadata']['order_id'])
+
+            order = session.query(Order).filter(Order.id == order_id).first()
+
+            if not order:
+                raise HTTPException(status_code=404, detail="Order not found")
+
+            order.status = OrderStatus.canceled
+            
+        order.updated_at = datetime.now()
+        session.commit()
