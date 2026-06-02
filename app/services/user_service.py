@@ -15,7 +15,7 @@ class UserService:
             raise HTTPException(status_code=400, detail="First name and last name cannot be empty")
         
         if not user:
-            logger.warning(f"User with ID {user.id} not found when trying to update username")
+            logger.warning(f"User not found when trying to update username")
             raise HTTPException(status_code=404, detail="User not found")
         
         logger.info(f"Updating username for user with ID {user.id}")
@@ -31,7 +31,7 @@ class UserService:
             raise HTTPException(status_code=400, detail="Email cannot be empty")
         
         if not user:
-            logger.warning(f"User with ID {user.id} not found when trying to update email")
+            logger.warning(f"User not found when trying to update email")
             raise HTTPException(status_code=404, detail="User not found")
         
         exist_email = session.query(User).filter(User.email == data.email).first()
@@ -51,7 +51,7 @@ class UserService:
             raise HTTPException(status_code=400, detail="Password cannot be empty")
         
         if not user:
-            logger.warning(f"User with ID {user.id} not found when trying to update password")
+            logger.warning(f"User not found when trying to update password")
             raise HTTPException(status_code=404, detail="User not found")
         
         if len(data.password) < 8:
@@ -74,7 +74,7 @@ class UserService:
             raise HTTPException(status_code=400, detail="Complement cannot be empty")
         
         if not user:
-            logger.warning(f"User with ID {user.id} not found when trying to update address")
+            logger.warning(f"User not found when trying to update address")
             raise HTTPException(status_code=404, detail="User not found")
         
         formated_cep = "".join(filter(str.isdigit, data.cep))
