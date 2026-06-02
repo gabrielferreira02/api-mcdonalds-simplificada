@@ -12,6 +12,10 @@ import logging
 
 supabase_client = create_client(supabase_key=SUPABASE_KEY, supabase_url=SUPABASE_URL)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+logger.addHandler(console_handler)
 
 class ProductService:
     def create_product(name: str,

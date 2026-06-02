@@ -7,6 +7,10 @@ from app.helpers.validate_cep import is_valid_cep
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+logger.addHandler(console_handler)
 
 class UserService:
     def update_username(user: User, data: UpdateUsernameSchema, session: Session):

@@ -12,6 +12,10 @@ from app.core.security import pwd_context
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+logger.addHandler(console_handler)
 
 class AuthService:
     def user_register(body: RegisterRequestSchema, session: Session):

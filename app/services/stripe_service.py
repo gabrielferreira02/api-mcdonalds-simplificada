@@ -8,6 +8,10 @@ from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+logger.addHandler(console_handler)
 
 class StripeService:
     async def payment_webhook(request: Request, session: Session):
