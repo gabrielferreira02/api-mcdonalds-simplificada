@@ -39,7 +39,7 @@ class AuthService:
             raise HTTPException(status_code=400, detail="Empty complement")
         if not body.cpf:
             logger.warning("Empty cpf provided")
-            raise HTTPException(status_code=400, detail="Empty first cpf")
+            raise HTTPException(status_code=400, detail="Empty cpf")
         
         formated_cep = "".join(filter(str.isdigit, body.cep))
         formated_cpf = "".join(filter(str.isdigit, body.cpf))
