@@ -154,7 +154,7 @@ class ProductService:
         
         new_slug = generate_slug(body.name)
         if new_slug != product.slug:
-            exist_slug = session.query(Product).filter(Product.slug == slug).first()
+            exist_slug = session.query(Product).filter(Product.slug == new_slug).first()
             if exist_slug:
                 logger.warning("Product name already registered")
                 raise HTTPException(status_code=400, detail="Product name already registered")
