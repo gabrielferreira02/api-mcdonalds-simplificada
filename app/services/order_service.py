@@ -123,7 +123,7 @@ class OrderService:
             raise HTTPException(status_code=400, detail="Invalid page")
         limit = 10
         offset = (page - 1) * limit
-        total = session.query(User).count()
+        total = session.query(Order).filter(Order.user_id == id).count()
 
         orders = (
             session.query(Order)
