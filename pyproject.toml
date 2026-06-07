@@ -1,2 +1,11 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "api-mcdonalds-simplificada"
+version = "0.1.0"
+description = "API FastAPI para gerenciamento de pedidos"
+
 [tool.fastapi]
 entrypoint = "app.main:app"
