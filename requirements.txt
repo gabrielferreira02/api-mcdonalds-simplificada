@@ -8,3 +8,4 @@ passlib[argon2]
 pytest
 stripe
 supabase
+fastapi-cli
