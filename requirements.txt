@@ -9,3 +9,5 @@ pytest
 stripe
 supabase
 fastapi-cli
+python-multipart
+pydantic-settings
