@@ -148,7 +148,7 @@ As migrações são gerenciadas pelo Alembic.
 ### Clonar repositório
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/gabrielferreira02/api-mcdonalds-simplificada.git
 cd api-mcdonalds-simplificada
 ```
 
@@ -183,12 +183,15 @@ pip install -r requirements.txt
 Criar arquivo `.env`:
 
 ```env
-DATABASE_URL=
-JWT_SECRET=
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-SUPABASE_URL=
+SUPABASE_BUCKET=
+DB_URL=
 SUPABASE_KEY=
+SUPABASE_URL=
+STRIPE_KEY=
+STRIPE_ENDPOINT_SECRET=
+SECRET_KEY=
+ALGORITHM=
+JWT_EXPIRATION_TIME=
 ```
 
 ### Executar aplicação
