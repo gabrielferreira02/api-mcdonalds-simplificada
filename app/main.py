@@ -5,7 +5,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=["http://localhost:4200", "https://mequizin.netlify.app"],
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
