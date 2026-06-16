@@ -81,7 +81,7 @@ class OrderService:
             logger.info("Creating checkout session")
             session_checkout = client.v1.checkout.sessions.create(
                 params={
-                    'success_url': 'http://localhost:4200/pagamentos/sucesso',
+                    'success_url': 'https://mequizin.netlify.app/pagamentos/sucesso',
                     'cancel_url': 'http://localhost:8000/cancel',
                     'mode': 'payment',
                     'line_items': [
